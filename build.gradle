@@ -1,0 +1,48 @@
+group 'com.logpoint.analytics'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "${artifactory_contextUrl}/jcenter" }
+    maven { url "${artifactory_contextUrl}/libs-release-local" }
+    maven { url "${artifactory_contextUrl}/libs-snapshot-local" }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile(group: 'com.logpoint', name: 'libcommon', version: '2.1.10-SNAPSHOT') {
+        exclude(group: 'org.mockito')
+        exclude(group: 'org.powermock')
+        exclude(group: 'junit')
+    }
+
+    //kafka dependencies
+    compile(group: 'org.apache.kafka', name: 'kafka_2.11', version: '1.0.0') {
+        exclude(group: 'log4j')
+        exclude(group: 'org.slf4j')
+    }
+
+    compile(group: 'org.apache.kafka', name: 'kafka-streams', version: '1.0.0') {
+        exclude(group: 'log4j')
+        exclude(group: 'org.slf4j')
+    }
+
+    compileOnly files('/usr/local/share/java/zmq.jar')
+    compile(group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1')
+    compile(group: 'com.cloudbees', name: 'syslog-java-client', version: '1.0.8')
+    compile(group: 'com.tdunning', name: 't-digest', version: '3.1')
+
+}
+
+jar {
+    exclude('logback.xml')
+    manifest {
+        attributes 'Main-Class': 'com.logpoint.analytics.Analytics'
+    }
+    from configurations.runtime.collect { zipTree(it) }
+}
