@@ -10,6 +10,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class TestProcessor implements Processor {
 
@@ -20,8 +21,9 @@ public class TestProcessor implements Processor {
     @SuppressWarnings("unchecked")
     public void init(ProcessorContext context) {
         this.context = context;
+        long windowSize = TimeUnit.SECONDS.toMillis(20);
 
-        this.context.schedule(5000, PunctuationType.WALL_CLOCK_TIME, new Punctuator() {
+        this.context.schedule(windowSize, PunctuationType.WALL_CLOCK_TIME, new Punctuator() {
             @Override
             public void punctuate(long timestamp) {
                 KeyValueIterator<String, Long> iter = kvStore.all();

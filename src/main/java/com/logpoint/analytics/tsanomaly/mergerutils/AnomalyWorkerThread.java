@@ -103,7 +103,7 @@ public class AnomalyWorkerThread implements Runnable {
             double anomaly_score =
                     anomalyModel.push(((Number) object).doubleValue());
             Double threshold = 5.0;
-            Log.info("device: " + key_ + " count: " + ((Number) object).doubleValue() + " score: " + anomaly_score);
+            Log.info("Window data, device: " + key_ + " count: " + ((Number) object).doubleValue() + " score: " + anomaly_score);
             if (anomaly_score > threshold) {
                 Map<String, Object> deepClone =
                         (Map<String, Object>) deepClone(row);
@@ -122,7 +122,7 @@ public class AnomalyWorkerThread implements Runnable {
                 deepClone.put("anomaly_field",
                         "device_ip");
                 deepClone.put("anomaly_score", anomaly_score);
-                Log.info("Sending log to tcp...");
+                Log.info("Anomaly Score is greater than threshold. Sending alert to TCP...");
                 try {
                     String logToBeSent =
                             JsonConverter.hashMapToJson(deepClone);

@@ -24,7 +24,11 @@ public class AnalyticsJobUsingProcessor implements Runnable {
     private Properties streamsConfiguration;
     private StreamsBuilder streamsBuilder;
     private KStream<String, byte[]> kStream;
-    private static final String INPUT_TOPIC = "nirajan_normlogs";
+    private static final String INPUT_TOPIC1 = "_logpoint_normlogs";
+    private static final String INPUT_TOPIC2 = "default_normlogs";
+    private static final String INPUT_TOPIC3 = "_LogPointAlerts_normlogs";
+    private static final String INPUT_TOPIC4 = "nirajan_normlogs";
+
     private static final String OUTPUT_TOPIC = "analytics-output-topic";
 
     //kafka declarations for producer
@@ -60,8 +64,11 @@ public class AnalyticsJobUsingProcessor implements Runnable {
                 Serdes.Long())
                 .withLoggingDisabled();
 
-        topology.addSource("SOURCE", INPUT_TOPIC)
-                .addProcessor("PROCESS", () -> new TestProcessor(), "SOURCE")
+        topology.addSource("SOURCE1", INPUT_TOPIC1)
+                .addSource("SOURCE2", INPUT_TOPIC2)
+                .addSource("SOURCE3", INPUT_TOPIC3)
+                .addSource("SOURCE4", INPUT_TOPIC4)
+                .addProcessor("PROCESS", () -> new TestProcessor(), "SOURCE1", "SOURCE2", "SOURCE3", "SOURCE4")
                 .addStateStore(countStoreSupplier, "PROCESS")
                 .addSink("SINK", OUTPUT_TOPIC, "PROCESS");
 
